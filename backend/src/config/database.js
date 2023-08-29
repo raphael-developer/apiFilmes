@@ -1,6 +1,6 @@
 let ambiente = undefined;
 
-switch(process.env.PUBLICAR){
+switch(process.env.PUBLISH){
     case "HML": 
         ambiente = configurarHML();
         break;

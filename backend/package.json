@@ -5,7 +5,15 @@
   "author": "Raphael",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "criar-banco": "sequelize db:create",
+    "criar-migration": "sequelize migration:create --name=criar-tabela-xyz",
+    "executar-migration": "sequelize db:migrate",
+    "desfazer-migration": "sequelize db:migrate:undo",
+    "criar-seeder": "sequelize seed:create --name=seed-tabela-xyz",
+    "executar-seeder": "sequelize db:seed:all",
+    "iniciar-banco": "sequelize db:create && sequelize db:migrate",
+    "iniciar-banco-com-dados": "sequelize db:create && sequelize db:migrate && sequelize db:seed:all"
   },
   "dependencies": {
     "dotenv": "^16.3.1",

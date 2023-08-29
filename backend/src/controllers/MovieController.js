@@ -1,4 +1,9 @@
-const Movie = require("../models/Movie");
+// const Movie = require("../models/Movie");
+const { connection, Movie } = require('../database/index');
+
+// console.log('Conexão está estabelecida:', connection.authenticate());
+Movie.init(connection);
+// console.log('Modelo Movie inicializado');
 
 module.exports = {
   async list(req, res) {
@@ -9,14 +14,17 @@ module.exports = {
       return console.error("Erro na listagem: ", err);
     }
   },
+  
   async show(req, res) {
     try {
-      const movie = await Movie.findAll({ where: { id: req.params.id } });
+      const movie = await Movie.findOne({ where: { id: req.params.id } });
       return res.json(movie);
     } catch (err) {
-      return console.err("Erro na busca: ", err);
+      console.error("Erro na busca: ", err);
+      return res.status(500).json({ error: "Erro na busca" });
     }
   },
+
   async create(req, res) {
     const { title, poster, overview } = req.body;
     try {

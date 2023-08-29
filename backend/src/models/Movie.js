@@ -1,19 +1,24 @@
-const Sequelize = require("sequelize");
-const sequelize = require("../db.js");
+const { Model, DataTypes } = require("sequelize");
 
-const schema = "public";
-
-class Movie extends Sequelize.Model {}
-
-Movie.init(
-  {
-    title: Sequelize.STRING,
-    poster: Sequelize.STRING,
-    overview: Sequelize.TEXT,
-  },
-  { sequelize, modelName: 'movie', schema }
-);
-
-sequelize.sync();
+class Movie extends Model {
+  static init(connection) {
+    super.init(
+      {
+        title: DataTypes.STRING,
+        poster: DataTypes.STRING,
+        overview: DataTypes.TEXT,
+      },
+      {
+        sequelize: connection,
+        schema: "public",
+        tableName: "movies",
+        createdAt: "createdAt",
+        updatedAt: "updatedAt",
+        timestamps: true,
+        underscored: false,
+      }
+    );
+  }
+}
 
 module.exports = Movie;
