@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../src/css/style.css">
+  <link rel="stylesheet" href="../src/css/form-filmes.css">
+  <title>Cadastro de Filmes</title>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <h1>Filmes API</h1>
+      <ul>
+        <li><a href="../index.html">Filmes</a></li>
+        <li><a href="./cadastro.html">Adicionar Filme</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <form id="movie-form">
+      <label for="title">Título do Filme:</label>
+      <input type="text" id="title" name="title" required>
+
+      <label for="poster">URL do Poster:</label>
+      <input type="url" id="poster" name="poster" required>
+
+      <label for="overview">Sinopse:</label>
+      <textarea id="overview" name="overview" rows="4" required></textarea>
+
+      <button type="submit">Cadastrar Filme</button>
+    </form>
+  </main>
+  <footer>
+    <p>&copy; 2023 API Filmes</p>
+  </footer>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const movieForm = document.getElementById("movie-form");
+
+      movieForm.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const movieData = {
+          title: movieForm.title.value,
+          poster: movieForm.poster.value,
+          overview: movieForm.overview.value,
+        };
+
+        try {
+          const response = await fetch("http://localhost:5555/movies", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(movieData),
+          });
+
+          if (response.ok) {
+            alert("Filme cadastrado com sucesso!");
+            // Limpar os campos após 3 segundos
+            setTimeout(() => {
+              movieForm.reset();
+            }, 1000);
+          } else {
+            alert("Erro ao cadastrar filme.");
+          }
+        } catch (error) {
+          alert("Erro de conexão.");
+        }
+      });
+    });
+
+  </script>
+</body>
+
+</html>

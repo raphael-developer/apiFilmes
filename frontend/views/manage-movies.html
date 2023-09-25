@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../src/css/style.css">
+  <title>Gerenciamento de Filmes</title>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <h1>Filmes API</h1>
+      <ul>
+        <li><a href="#">Filmes</a></li>
+        <li><a href="./cadastro.html">Adicionar Filme</a></li>
+      </ul>
+    </nav>
+  </header>
+
+
+  <main>
+    <h2>Lista de Filmes</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <!-- Conteúdo do modal para edição/exclusão -->
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2023 API Filmes</p>
+  </footer>
+
+  <script>
+    // Evento de submissão do formulário de cadastro
+    const movieForm = document.getElementById("movie-form");
+    const modal = document.getElementById("modal");
+    const modalContent = modal.querySelector(".modal-content");
+
+    // Carregar dados da tabela ao carregar a página
+    window.addEventListener("load", () => {
+      fetch("http://localhost:5555/movies")
+        .then(response => response.json())
+        .then(data => {
+          populateTable(data);
+        })
+        .catch(error => console.error("Erro ao carregar a página: ", error));
+    });
+
+    // Adicionar evento para abrir o modal de cadastro
+    const addMovieButton = document.getElementById("add-movie-button");
+    addMovieButton.addEventListener("click", () => {
+      openModal("add");
+    });
+
+
+
+    movieForm.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      const formData = new FormData(movieForm);
+
+      try {
+        const response = await fetch("http://localhost:5555/movies", {
+          method: "POST",
+          body: formData
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          alert("Filme cadastrado com sucesso!");
+
+          setTimeout(() => {
+            movieForm.reset();
+          }, 3000);
+        } else {
+          alert("Erro ao cadastrar filme.");
+        }
+      } catch (error) {
+        console.error("Erro ao cadastrar filme: ", error);
+        alert("Erro ao cadastrar filme.");
+      }
+    });
+
+    // Função para abrir o modal
+    function openModal(action, movieId) {
+      modal.style.display = "block";
+      modalContent.innerHTML = `
+    <h2>${action === "add" ? "Cadastrar Filme" : "Editar Filme"}</h2>
+    <form id="modal-form">
+      <label for="title">Título do Filme:</label>
+      <input type="text" id="modal-title" name="title" required>
+
+      <label for="poster">URL do Poster:</label>
+      <input type="url" id="modal-poster" name="poster" required>
+
+      <label for="overview">Sinopse:</label>
+      <textarea id="modal-overview" name="overview" rows="4" required></textarea>
+
+      <button type="submit">${action === "add" ? "Cadastrar" : "Salvar"}</button>
+    </form>
+  `;
+
+      const modalForm = modalContent.querySelector("#modal-form");
+      modalForm.addEventListener("submit", async event => {
+        event.preventDefault();
+        const modalFormData = new FormData(modalForm);
+
+        // Restante do código para tratar a ação de cadastro/edição
+        // ...
+
+        closeModal();
+      });
+    }
+
+    // Função para fechar o modal
+    function closeModal() {
+      modal.style.display = "none";
+    }
+
+    // ...
+
+    // Carregar a tabela com os filmes
+    function populateTable(movies) {
+      const tableBody = document.querySelector("tbody");
+      tableBody.innerHTML = "";
+
+      movies.forEach(movie => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+        <td>${movie.title}</td>
+        <td>
+            <button class="edit-button" data-id="${movie.id}">Editar</button>
+            <button class="delete-button" data-id="${movie.id}">Deletar</button>
+        </td>
+    `;
+        tableBody.appendChild(row);
+      });
+
+      // Configurar os botões de edição/deleção
+      const editButtons = document.querySelectorAll(".edit-button");
+      const deleteButtons = document.querySelectorAll(".delete-button");
+
+      editButtons.forEach(button => {
+        button.addEventListener("click", () => {
+          const movieId = button.getAttribute("data-id");
+          openModal("edit", movieId);
+        });
+      });
+
+      deleteButtons.forEach(button => {
+        button.addEventListener("click", () => {
+          const movieId = button.getAttribute("data-id");
+          openModal("delete", movieId);
+        });
+      });
+    }
+
+  </script>
+</body>
+
+</html>
