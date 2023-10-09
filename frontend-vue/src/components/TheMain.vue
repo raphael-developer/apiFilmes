@@ -1,5 +1,6 @@
 <template>
   <main class="main">
+    <TheForm />
     <h1 :class="{'title': false}">{{ titleMsg }}</h1>
     <ul>
       <li v-for="movie in movies" :key="movie.id"> ➡️ {{ movie.title }}</li>
@@ -9,11 +10,15 @@
 
 <script>
 import movieService from "@/services/movieService";
+import TheForm from "./TheForm.vue";
 
 export default {
   name: "TheMain",
   props: {
     titleMsg: String,
+  },
+  components: {
+    TheForm,
   },
 
   data() {
